@@ -1,0 +1,827 @@
+{
+  "name": "restaurent bot additional changes",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -700,
+        -700
+      ],
+      "id": "72fda7e1-2a04-4005-ad5c-42547d7b8f22",
+      "name": "Telegram Trigger",
+      "webhookId": "2927e4bb-9f4d-479a-b6d0-8f766bc47f3f",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zk48UqUG0XfY6fIi",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "100",
+        "contextWindowLength": 1000
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -360,
+        -480
+      ],
+      "id": "68a1580a-136f-487a-89e7-a182f68dcfc9",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1OJ12ZBB5mi-k8BKK-XKm3_Gf1m98FWYR8iYBQmGP8Vs",
+          "mode": "list",
+          "cachedResultName": "Restaurant_Menu",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OJ12ZBB5mi-k8BKK-XKm3_Gf1m98FWYR8iYBQmGP8Vs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OJ12ZBB5mi-k8BKK-XKm3_Gf1m98FWYR8iYBQmGP8Vs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        -220,
+        -480
+      ],
+      "id": "e5755fbb-a90e-4e9e-bf74-62164265078c",
+      "name": "Menu",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ehUxHBMZViKer6vn",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        -700
+      ],
+      "id": "ffd407ab-8f18-4c9b-914d-07083503e320",
+      "name": "Telegram",
+      "webhookId": "17ae4076-30be-4d00-a198-af2bfc5b0c86",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zk48UqUG0XfY6fIi",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI-powered restaurant assistant for a biryani outlet on Telegram. Your primary responsibilities include:\n- Providing menu information using the \"Menu\" tool.\n- Taking customer food orders.\n- Recording order details into Google Sheets via the \"Order Book\" tool.\n\n---\n\n### ⚙️ Conversation Flow & Data Collection:\n\n**1. Greet and Show Menu**\n- When a user first interacts or asks for the menu, fetch the menu using the \"Menu\" tool.\n- Respond with: \"Welcome to our Biryani outlet! Here’s the menu: 🍽️ What would you like to order today?\"\n\n**2. Take the Order**\n- Ask what the user wishes to order.\n- Confirm if the item is available in the menu (use the \"Menu\" tool if needed to check).\n- If an item is not on the menu, respond with: \"Oops! That item is not on the menu. Please choose something from the list above.\"\n\n**3. Ask for Quantity**\n- For each ordered dish, inquire: \"How many plates of [dish] would you like?\"\n\n**4. Collect Customer Details**\n- Ask for the customer's name: \"May I know your name for the order?\"\n- Ask for the delivery address: \"Where should we deliver your order?\"\n\n---\n\n### 5.User Confirmation:\n\nOnce you have ALL the following essential information:\nconfirm with the user \n- **CustomerName**\n- **DeliveryAddress**\n- **OrderedItems** (ensure this includes quantity, e.g., \"2x Chicken Biryani\")\n- **TotalAmount** (calculated as price * quantity)\n\n\n### 6.Thank you :\nOnce all the information is collected and confirmed:\ngive a thank you message and strictly follow below message format without even a single character change and spacing it:\nThank you your order is confirmed \n-  CustomerName :\n-  DeliveryAddress :\n-  OrderedItems :(ensure this includes quantity, e.g., \"2x Chicken Biryani\")\n- TotalAmount:(calculated as price * quantity)\n\n\n**then call the \"Order Book\" tool.** Add the details in Google sheet\n\nhere is the user input :\n{{ $json.message.text }}\n",
+        "options": {
+          "systemMessage": "You are an AI-powered restaurant assistant for a biryani outlet on Telegram. Your primary responsibilities include:\n- Providing menu information using the \"Menu\" tool.\n- Taking customer food orders.\n- Recording order details into Google Sheets via the \"Order Book\" tool.\n\n---\n\n### ⚙️ Conversation Flow & Data Collection:\n\n**1. Greet and Show Menu**\n- When a user first interacts or asks for the menu, fetch the menu using the \"Menu\" tool.\n- Respond with: \"Welcome to our Biryani outlet! Here’s the menu: 🍽️ What would you like to order today?\"\n\n**2. Take the Order**\n- Ask what the user wishes to order.\n- Confirm if the item is available in the menu (use the \"Menu\" tool if needed to check).\n- If an item is not on the menu, respond with: \"Oops! That item is not on the menu. Please choose something from the list above.\"\n\n**3. Ask for Quantity**\n- For each ordered dish, inquire: \"How many plates of [dish] would you like?\"\n\n**4. Collect Customer Details**\n- Ask for the customer's name: \"May I know your name for the order?\"\n- Ask for the delivery address: \"Where should we deliver your order?\"\n\n---\n\n### 5.User Confirmation:\n\nOnce you have ALL the following essential information:\nconfirm with the user \n- **CustomerName**\n- **DeliveryAddress**\n- **OrderedItems** (ensure this includes quantity, e.g., \"2x Chicken Biryani\")\n- **TotalAmount** (calculated as price * quantity)\n\n\n### 6.Thank you :\nOnce all the information is collected and confirmed:\ngive a thank you message and strictly follow below message format without even a single character change and spacing it:\nThank you your order is confirmed \n-  CustomerName :\n-  DeliveryAddress :\n-  OrderedItems :(ensure this includes quantity, e.g., \"2x Chicken Biryani\")\n- TotalAmount:(calculated as price * quantity)\n\n**then call the \"Order Book\" tool.** Add the details in Google sheet"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        -700
+      ],
+      "id": "cc62083d-6950-41ad-8c85-87c13f89f79d",
+      "name": "AI Agent",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This is the \"Order Book\", you can put the name and order items in this sheet.  column include  CustomerName, DeliveryAddress,OrderedItems ,TotalAmount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY",
+          "mode": "list",
+          "cachedResultName": "Order_book",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ChatID": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+            "CustomerName": "={{ $fromAi(\"CustomerName\") }}",
+            "DeliveryAddress": "={{ $fromAi(\"DeliveryAddress\") }}",
+            "OrderedItems": "={{ $fromAi(\"OrderedItems\") }}",
+            "TotalAmount": "={{ $fromAi(\"TotalAmount\") }}",
+            "OrderStatus": "Pending"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ChatID",
+              "displayName": "ChatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CustomerName",
+              "displayName": "CustomerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DeliveryAddress",
+              "displayName": "DeliveryAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OrderedItems",
+              "displayName": "OrderedItems",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TotalAmount",
+              "displayName": "TotalAmount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OrderStatus",
+              "displayName": "OrderStatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        -100,
+        -480
+      ],
+      "id": "329d1482-3c91-4a42-9d63-f0aeb3f85ea7",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ehUxHBMZViKer6vn",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -480
+      ],
+      "id": "8f899ed9-3f6a-4481-ae9f-fdef04e69bf9",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Fq347cZx9kDOVxyf",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY",
+          "mode": "list",
+          "cachedResultName": "Order_book",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        -260
+      ],
+      "id": "2053be01-00ed-4944-b28f-02896de6f54e",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "F98m7pLpuhJiLDGJ",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "697812327",
+        "text": "=🆕 New Order Received:\n\n- Name: {{ $json.CustomerName }}\n- Address: {{ $json.DeliveryAddress }}\n- Items: {{ $json.OrderedItems }}\n- Total: ₹{{ $json.TotalAmount }}\n\n⏳ Status: {{ $json.OrderStatus }}\n\n🔄 Update status below:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Accept ✅",
+                    "additionalFields": {
+                      "callback_data": "=status_accepted |{{ $json.ChatID }}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Packed 📦",
+                    "additionalFields": {
+                      "callback_data": "=status_packed|{{ $json.ChatID }}"
+                    }
+                  },
+                  {
+                    "text": "Delivered 🚚",
+                    "additionalFields": {
+                      "callback_data": "=status_delivered|{{ $json.ChatID }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        -260
+      ],
+      "id": "52b40158-9e77-4916-9378-205edda4ecd2",
+      "name": "Restaurant Message",
+      "webhookId": "d802de37-817a-4122-afdf-ad476d070c27",
+      "credentials": {
+        "telegramApi": {
+          "id": "FOgAf9kKkiz8lfCr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -960,
+        120
+      ],
+      "id": "e7ac7cfa-511f-4bd8-8683-e2112abcc074",
+      "name": "Telegram Trigger1",
+      "webhookId": "9aa6211f-52f2-4b8a-94df-4024cd198e1e",
+      "credentials": {
+        "telegramApi": {
+          "id": "FOgAf9kKkiz8lfCr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = items[0].json.callback_query.data;\n\nif (!data.includes('|')) {\n  throw new Error(\"Callback data format is invalid. Expected format: status_value|chatId\");\n}\n\nconst [statusRaw, chatId] = data.split('|');\nconst status = statusRaw.replace('status_', ''); // Extract 'accepted', 'packed', 'delivered'\n\nreturn [\n  {\n    json: {\n      status,\n      customerChatId: chatId\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -700,
+        100
+      ],
+      "id": "bfc82bc2-34ef-4200-a5ca-0522e7f6e82b",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY",
+          "mode": "list",
+          "cachedResultName": "Order_book",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "OrderStatus": "={{ $json.status }}",
+            "ChatID": "={{ $json.customerChatId }}"
+          },
+          "matchingColumns": [
+            "ChatID"
+          ],
+          "schema": [
+            {
+              "id": "ChatID",
+              "displayName": "ChatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CustomerName",
+              "displayName": "CustomerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DeliveryAddress",
+              "displayName": "DeliveryAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "OrderedItems",
+              "displayName": "OrderedItems",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TotalAmount",
+              "displayName": "TotalAmount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "OrderStatus",
+              "displayName": "OrderStatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -460,
+        380
+      ],
+      "id": "072cb9bb-7c2e-4f38-9168-c28b2b409feb",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ehUxHBMZViKer6vn",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a Telegram message assistant for a restaurant bot.\n\nYour only task is to send a message to the customer based on their order status. You are not allowed to answer questions, ask for clarification, or do anything else.\n\nYou will receive two values:\n- `status`: one of \"accepted\", \"packed\", or \"delivered\"\n\n\nUse the following exact messages based on the status:\n\n- accepted → ✅ Great news! Your order has been accepted by the restaurant.\n- packed → 📦 Your order is now packed and ready for dispatch.\n- delivered → 🛵 Your order has been delivered. Enjoy your meal!\n\nYou must:\n1. Choose the correct message based on the status.\n2. Do not reply to anything else. Do not explain what you're doing.\n\nOnly perform this single task. Do not go out of scope.\nyour input :\n{{ $json.status }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -420,
+        0
+      ],
+      "id": "f565e1c4-8e8d-44ce-905f-a223d5690570",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        140
+      ],
+      "id": "1af58a6e-38a4-4f69-b98a-80ee0752d3b0",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Fq347cZx9kDOVxyf",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "5",
+        "contextWindowLength": 100
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -320,
+        200
+      ],
+      "id": "7b4aa1aa-c9d3-4ebf-b62e-b074118ad6a4",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Code').item.json.customerChatId }}",
+        "text": "=\n{{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        20
+      ],
+      "id": "f47eb1aa-c042-4c37-92bf-f1d1b80c462f",
+      "name": "Order status Message",
+      "webhookId": "20724afb-4c11-4779-b278-6bab27830cba",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zk48UqUG0XfY6fIi",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -860,
+        600
+      ],
+      "id": "39d42d2d-586f-43ed-9e0a-816ae8953619",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "697812327",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        600
+      ],
+      "id": "b4cd9410-1438-4c2e-a614-7f195b6b0ba3",
+      "name": "Telegram1",
+      "webhookId": "1aa13c4f-dd8a-428e-a4bd-dd8e40c311fa",
+      "credentials": {
+        "telegramApi": {
+          "id": "FOgAf9kKkiz8lfCr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY",
+          "mode": "list",
+          "cachedResultName": "Order_book",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yNRXWQaJWc31k8zsQnCocl02gvZ_Dnu8zphpB_dGKuY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -640,
+        600
+      ],
+      "id": "943bbdf3-d36d-4757-be4e-ce8c867e8782",
+      "name": "Google Sheets3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ehUxHBMZViKer6vn",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let totalOrders = 0;\nlet totalEarnings = 0;\n\nfor (const item of items) {\n  const amount = parseFloat(item.json.TotalAmount);\n  if (!isNaN(amount)) {\n    totalOrders += 1;\n    totalEarnings += amount;\n  }\n}\n\nlet message = '';\n\nif (totalOrders === 0) {\n  message = \"💰 *Daily Profit Report*\\nNo data available to calculate today’s earnings.\";\n} else {\n  message = `💰 *Daily Profit Report*\\nTotal orders today: ${totalOrders}\\nTotal earnings: ₹${totalEarnings}`;\n}\n\nreturn [\n  {\n    json: {\n      message\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        600
+      ],
+      "id": "f1f096f7-04ca-4b2e-8d89-5bb5fcd35d1e",
+      "name": "Code1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Menu": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Restaurant Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Order status Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets3": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7b90a8ea-bdb9-488b-93ae-b70618063fbc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8acbaf5dd97f41c77f18b588eff9fdab36d6b5f3e58b701b5fb8a8e1a6c02524"
+  },
+  "id": "TJFrgx0UozppHYTK",
+  "tags": []
+}
