@@ -1,8 +1,3 @@
-Sure! Below is the **complete `README.md` file** — copy and paste it directly into your GitHub repo 👇
-
----
-
-````markdown
 # 🍛 AI-Powered Restaurant Order Automation Bot (n8n + Telegram + Google Sheets)
 
 This is a complete end-to-end automated restaurant ordering system built using **n8n**, **Telegram**, **Google Sheets**, and an **AI Agent** powered by **Google Gemini**. It helps small food businesses manage customer orders, track status, and automate profit reporting — without writing backend code.
